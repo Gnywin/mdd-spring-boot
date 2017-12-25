@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="mdd.logistics.dao.UserDao">
+    <resultMap id="BaseResultMap" type="mdd.logistics.domain.User">
+        <result column="id" property="id"/>
+        <result column="user_name" property="userName"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <result column="mobile" property="mobile"/>
+        <result column="tel" property="tel"/>
+        <result column="co_name" property="coName"/>
+        <result column="co_address" property="coAddress"/>
+        <result column="type" property="type"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="mark" property="mark"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <sql id="table_name">LT_USER</sql>
+
+    <sql id="Base_Column_List">
+		id, user_name, account,password, mobile,tel,co_name,co_address,type,is_deleted,create_time,mark,status
+	</sql>
+    <select id="getById" parameterType="Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table_name"/>
+        where id = #{id}
+    </select>
+    <select id="getByAccount" parameterType="String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table_name"/>
+        where account = #{account} and is_deleted = 0
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="mdd.logistics.domain.User">
+        insert
+        <include refid="table_name"/>
+        (user_name, account,password, mobile,tel,co_name,co_address,
+        <if test="type != null">
+            type,
+        </if>
+        mark)
+        VALUES (#{userName},#{account},#{password},#{mobile},#{tel},#{coName},#{coAddress},
+        <if test="type != null">#{type},</if>
+        #{mark})
+    </insert>
+    <update id="update" parameterType="mdd.logistics.domain.User">
+        UPDATE <include refid="table_name"/>
+        SET
+        <trim suffixOverrides=",">
+            <if test="password != null and password!=''">
+                password = #{password},
+            </if>
+            <if test="coName != null and coName!=''">
+                co_name = #{coName},
+            </if>
+            <if test="password != null and password!=''">
+                password = #{password},
+            </if>
+            <if test="isDeleted != null and isDeleted!=''">
+                is_deleted = #{isDeleted},
+            </if>
+            <if test="status != null and status!=''">
+                status = #{status},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <select id="pageUser" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table_name"/>
+    </select>
+</mapper>

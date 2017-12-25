@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="mdd.logistics.dao.OrderDao">
+    <resultMap id="BaseResultMap" type="mdd.logistics.domain.Order">
+        <result column="id" property="id"/>
+        <result column="service_type" property="serviceType"/>
+        <result column="status" property="status"/>
+        <result column="total" property="total"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="mark" property="mark"/>
+        <result column="uid" property="uid"/>
+        <result column="exporter_co_name" property="exporterCoName"/>
+        <result column="exporter_address" property="exporterAddress"/>
+        <result column="exporter_name" property="exporterName"/>
+        <result column="exporter_phone" property="exporterPhone"/>
+        <result column="exporter_mark" property="exporterMark"/>
+        <result column="recipient_co_name" property="recipientCoName"/>
+        <result column="recipient_address" property="recipientAddress"/>
+        <result column="recipient_name" property="recipientName"/>
+        <result column="recipient_phone" property="recipientPhone"/>
+        <result column="recipient_mark" property="recipientMark"/>
+    </resultMap>
+    <sql id="table_name">LT_ORDER</sql>
+
+    <sql id="Base_Column_List">
+		id, service_type, status,total, is_deleted,create_time,mark,
+        uid,exporter_co_name,exporter_address,exporter_name,exporter_phone,exporter_mark,
+        recipient_co_name,recipient_address,recipient_name,recipient_phone,recipient_mark
+    </sql>
+    <select id="getById" parameterType="Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table_name"/>
+        where id = #{id}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="mdd.logistics.domain.User">
+        insert
+        <include refid="table_name"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,service_type,total,
+            <if test="mark!=null">mark,</if>
+            uid,exporter_co_name,exporter_address,exporter_name,exporter_phone,
+            <if test="exporterMark!=null">exporter_mark,</if>
+            recipient_co_name,recipient_address,recipient_name,recipient_phone,
+            <if test="recipientMark!=null">recipient_mark</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{id},#{serviceType},#{total},
+            <if test="mark!=null">#{mark},</if>
+            #{uid},#{exporterCoName},#{exporterAddress},#{exporterName},#{exporterPhone},
+            <if test="exporterMark!=null">#{exporterMark},</if>
+            #{recipientCoName},#{recipientAddress},#{recipientName},#{recipientPhone},
+            <if test="recipientMark!=null">#{recipientMark}</if>
+        </trim>
+    </insert>
+
+    <select id="pageOrder" parameterType="Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table_name"/>
+        <if test="uid != null">
+            where uid = #{uid}
+        </if>
+    </select>
+
+    <update id="updateStatus">
+        UPDATE  <include refid="table_name"/> SET status = #{status} where id= #{id}
+    </update>
+
+</mapper>

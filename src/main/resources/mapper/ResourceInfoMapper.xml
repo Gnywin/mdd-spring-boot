@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="mdd.logistics.dao.ResourceInfoDao">
+    <resultMap id="BaseResultMap" type="mdd.logistics.domain.ResourceInfo">
+        <result column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="type" property="type"/>
+        <result column="num" property="num"/>
+        <result column="weight" property="weight"/>
+        <result column="size" property="size"/>
+        <result column="name" property="name"/>
+        <result column="hs_num" property="hsNum"/>
+    </resultMap>
+    <sql id="table_name">LT_RESOURCE_INFO</sql>
+
+    <sql id="Base_Column_List">
+		id, order_id, type, weight,size,name,hs_num
+    </sql>
+    <!--<select id="getById" parameterType="Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table_name"/>
+        where id = #{id}
+    </select>-->
+
+    <insert id="insertList" parameterType="java.util.List">
+        insert
+        <include refid="table_name"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            order_id, type,num, weight,
+            size,name,hs_num
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{orderId},#{item.type},#{item.num},#{item.weight},
+                <choose>
+                <when  test="item.size != null">
+                    #{item.size},
+                </when>
+                    <otherwise>
+                        "",
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when  test="item.name != null">
+                        #{item.name},
+                    </when>
+                    <otherwise>
+                        "",
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when  test="item.hsNum != null">
+                        #{item.hsNum}
+                    </when>
+                    <otherwise>
+                        ""
+                    </otherwise>
+                </choose>
+            </trim>
+        </foreach>
+    </insert>
+</mapper>
